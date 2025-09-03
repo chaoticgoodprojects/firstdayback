@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>first day back</title>
+  <link rel="stylesheet" href="https://unpkg.com/xp.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- Faux Terminal Overlay -->
+<div id="terminal-overlay" style="
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: #000;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100000;
+">
+  <div class="window window--xp" style="
+    width: 600px; max-width: 90%; height: 400px; max-height: 80%;
+    display: flex; flex-direction: column; overflow: auto;
+  ">
+    <div class="title-bar">
+      <div class="title-bar-text">C:\&gt; Terminal</div>
+    </div>
+    <div class="window-body" style="
+      background: #000; color: #0f0;
+      font-family: 'Courier New', monospace; font-size: 14px;
+      white-space: pre-wrap; position: relative; padding: 8px;
+      flex: 1;
+    ">
+      <pre id="terminal-output" style="margin:0;"></pre>
+    </div>
+  </div>
+</div>
+
+  <div id="desktop" class="desktop">
+    <!-- Desktop Icons -->
+    <!div class="desktop-icons">
+
+
+      </div>
+    </div>
+
+    <!-- Documents Window -->
+    <div class="window" id="documents-window" style="display: block; top: 50px; left: 50px; position: absolute;">
+      <div class="title-bar">
+        <div class="title-bar-text">Past Gigs</div>
+        <div class="title-bar-controls">
+          <button aria-label="Minimize"></button>
+          <button aria-label="Maximize"></button>
+        </div>
+      </div>
+       <div class="window-body">
+   <ul class="tree-view">
+     <li>
+       <details open>
+         <summary>First Day Back 2025 Gigs</summary>
+         <!-- this UL will be filled by JS: -->
+         <ul id="gigs-list"></ul>
+       </details>
+     </li>
+   </ul>
+ </div>
+</div>
+    <!-- Audio Player -->
+    <div class="window" id="audio-window" style="display: block; top: 300px; left: 900px; position: absolute;">
+  <div class="title-bar">
+    <div class="title-bar-text" style="width: 100%; text-align: center;">LISTEN HERE</div>
+  </div>
+  <div style="margin-bottom: 8px; display: flex; flex-direction: column; align-items: center;">
+<p id="track-title" style="display: none;"></p>
+<p id="track-now" style="margin-bottom: 10px; font-weight: bold;">Now Playing: sure, ok</p>
+  <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 5px;">
+    <button id="rewind-btn">[<<]</button>
+    <span id="current-time">0:00</span>
+    <button id="play-pause-btn">[>]</button>
+    <span id="duration">0:00</span>
+    <button id="skip-btn">[>>]</button>
+    <button id="shuffle-btn">[shuffle]</button>
+  </div>
+</div>
+</div>
+
+<div class="window" id="cmd-window" style="display: block; top: 430px; left: 100px; position: absolute; width: 400px;">
+  <div class="title-bar">
+    <div class="title-bar-text">About</div>
+    <div class="title-bar-controls">
+          <button aria-label="Minimize"></button>
+          <button aria-label="Maximize"></button>
+    </div>
+  </div>
+  <div class="window-body">
+    <pre>Microsoft❮R❯ Windows DOS 
+❮C❯ Copyright First Day Back 2025.</pre>
+  </div>
+</div>
+
+<!-- Social Media Window -->
+<div class="window window--xp" id="social-window"
+     style="display:block; top:300px; left:550px; position:absolute; width:300px;">
+  <div class="title-bar">
+    <div class="title-bar-text">Social Media</div>
+    <div class="title-bar-controls">
+      <button aria-label="Minimize"></button>
+      <button aria-label="Maximize"></button>
+    </div>
+  </div>
+  <div class="window-body" style="padding:8px;">
+<fieldset class="groupbox">
+  <legend>Follow Us</legend>
+
+
+  <div class="field-row">
+    <input
+      id="social-radio-instagram"
+      type="radio"
+      name="social"
+      value="https://instagram.com/firstdayback_"
+    >
+    <label for="social-radio-instagram">Instagram</label>
+  </div>
+
+  <div class="field-row">
+    <input
+      id="social-radio-tiktok"
+      type="radio"
+      name="social"
+      value="https://tiktok.com/@firstdayback"
+    >
+    <label for="social-radio-tiktok">TikTok</label>
+  </div>
+
+  <div class="field-row">
+    <input
+      id="social-radio-bandcamp"
+      type="radio"
+      name="social"
+      value="https://firstdayback.bandcamp.com/album/forward"
+    >
+    <label for="social-radio-bandcamp">Bandcamp</label>
+  </div>
+
+</fieldset>
+
+<!-- your existing Follow button stays here -->
+<button id="follow-button" class="xp xp-button" style="width:100%;">
+  Follow
+</button>  </div>
+</div>
+
+<!-- Upcoming Gigs Window -->
+<div class="window window--xp" id="upcoming-window"
+     style="display:block; top:190px; left:240px; position:absolute;">
+  <div class="title-bar">
+    <div class="title-bar-text">Upcoming Gigs</div>
+    <div class="title-bar-controls">
+      <button aria-label="Minimize"></button>
+      <button aria-label="Maximize"></button>
+    </div>
+  </div>
+  <div class="window-body" style="overflow:auto; padding:8px;">
+    <ul class="tree-view" id="upcoming-list"></ul>
+  </div>
+</div>
+
+    <audio id="audio-player" src="lines.mp3"></audio>
+  </div>
+</div>
+
+<div class="window" id="video-window" style="
+  display: none;
+  top: 150px;
+  left: 100px;
+  position: absolute;
+  width: 270px;
+  aspect-ratio: 9 / 16;
+  resize: both;
+  overflow: hidden;
+  max-width: 100%;
+  max-height: 100%;
+">
+  <div class="title-bar">
+    <div class="title-bar-text">Video Player</div>
+    <div class="title-bar-controls">
+      <button aria-label="Close"></button>
+    </div>
+  </div>
+  <div class="window-body" style="padding: 0; height: calc(100% - 30px); display: flex;">
+    <video id="video-player" controls style="width: 100%; height: 100%; object-fit: contain;"></video>
+  </div>
+</div>
+
+<div class="window" id="pictures-window" style="display: none; top: 100px; left: 100px; position: absolute; width: 300px;">
+  <div class="title-bar">
+    <div class="title-bar-text">Pictures</div>
+    <div class="title-bar-controls">
+      <button aria-label="Close"></button>
+    </div>
+  </div>
+  <div class="window-body">
+    <ul class="tree-view">
+      <li><span class="picture-link" data-src="photo1.png">the band!</span></li>
+      <li><span class="picture-link" data-src="pic2.jpg">photo2.jpg</span></li>
+      <li><span class="picture-link" data-src="pic3.jpg">photo3.jpg</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Merch Window -->
+<div class="window window--xp" id="merch-window" style="
+     display: block;
+     top: 50px; left: 570px;
+     position: absolute;
+     width: 500px; height: 200px;
+">
+  <div class="title-bar">
+    <div class="title-bar-text">Merch</div>
+    <div class="title-bar-controls">
+      <button aria-label="Minimize"></button>
+      <button aria-label="Maximize"></button>
+    </div>
+  </div>
+  <div class="window-body" style="padding: 0;">
+    <!-- embed your Bandcamp merch widget here -->
+      <div class="merch-grid">
+    <div class="merch-item">
+      <img src="cd cover.jpg" alt="CD">
+      <button class="purchase-button" data-url="https://firstdayback.bandcamp.com/album/forward">SOLD OUT</button>
+    </div>
+    <div class="merch-item">
+      <img src="tshirt.jpg" alt="SHIRT">
+      <button class="purchase-button" data-url="">COMING SOON</button>
+    </div>
+    <div class="merch-item">
+      <img src="tourflyer.png" alt="Tour Poster">
+      <button class="purchase-button" data-url="">COMING SOON</button>
+    </div>
+    <!-- add more .merch-item blocks as needed -->
+  </div>
+</div>
+  </div>
+</div>
+
+    <!-- Taskbar -->
+<div id="xp-taskbar" class="title-bar" style="
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  z-index: 10000;
+">
+  <div id="taskbar-clock" style="
+      position: absolute;
+      right: 30px; bottom: 2px;
+      font-family: Tahoma, Geneva, sans-serif;
+      font-size: 12px;
+      color: white;
+  "></div>
+
+  <!-- Mute Toggle Button -->
+  <button id="mute-button" class="xp xp-button" style="
+      position: absolute;
+      right: 90px; bottom: 4px;
+      width: 24px; height: 24px;
+      padding: 0;
+  ">🔊</button>
+  <!-- Replace the text with your PNG -->
+<button
+  id="start-button"
+  class="xp start title-bar-text"
+  style="padding: 2px 8px; height: auto;"
+  onclick="window.location.href='mailto:your.email@example.com';"
+>
+  Contact
+</button>
+  <div id="task-buttons" style="display: flex; gap: 6px;"></div>
+</div>
+</div>
+
+<div class="window" id="picture-viewer" style="display: none; top: 100px; left: 150px; position: absolute; width: 320px;">
+  <div class="title-bar">
+    <div class="title-bar-text">Picture Viewer</div>
+    <div class="title-bar-controls">
+      <button aria-label="Close"></button>
+    </div>
+  </div>
+  <div class="window-body" style="text-align: center;">
+    <img id="picture-image" src="" alt="Picture" style="max-width: 100%; height: auto;" />
+  </div>
+</div>
+
+<!-- Notification Popup -->
+<div id="notification-toast" style="display:none; position: fixed; bottom: 50px; right: 20px; opacity: 0;">
+  <img src="notification.png" alt="Notification" style="width: 200px; height: auto; display: block;" />
+<div id="notification-text">ben: it's a rough bounce wear headphones when u listen</div>
+</div>
+
+<!-- notification sound -->
+<audio id="notification-sound" src="notification.mp3" preload="auto"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
